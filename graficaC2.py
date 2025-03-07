@@ -73,21 +73,15 @@ for ax in axs:
     ax.spines['left'].set_color(COLOR_TEXTO)
     ax.grid(True, alpha=0.2, color=COLOR_TEXTO)
 
-# --- Gráfica 1: Cadenas por longitud ---
-# print(cadenas_por_longitud)
-axs[0].plot(cadenas_por_longitud, 
-           color=COLOR_LINEAS, 
-           marker="o", 
-           markersize=8,
-           linewidth=2,
-           markerfacecolor=COLOR_TEXTO)
-axs[0].set_title("Densidad de '1s'", 
-                color=COLOR_TEXTO, 
-                fontsize=12,
-                fontweight='bold',
-                pad=15)
-axs[0].set_xlabel("Numero de cadenas", color=COLOR_TEXTO)
-axs[0].set_ylabel("Densidad '1s'", color=COLOR_TEXTO)
+
+# --- Gráfica 1: Densidad de '1's por cadena (Optimizada) ---
+
+axs[0].plot(range(1, longitud_maxima + 1), acum_unos, color=COLOR_LINEAS, marker="o", markersize=5, linewidth=2)
+
+axs[0].set_title("Crecimiento de '1's en función de n", color=COLOR_TEXTO, fontsize=12, fontweight='bold', pad=15)
+axs[0].set_xlabel("Longitud de las cadenas (n)", color=COLOR_TEXTO)
+axs[0].set_ylabel("Cantidad acumulada de '1's", color=COLOR_TEXTO)
+
 
 # --- Gráfica 2: Cadenas acumuladas (Log) ---
 axs[1].semilogy(acum_cadenas, 

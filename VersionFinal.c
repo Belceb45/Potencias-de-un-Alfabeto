@@ -55,7 +55,7 @@ int main() {
                 continue;
             }
 
-            fprintf(archivo, "E* = e");
+            fprintf(archivo, "E* = { e");
             unsigned long long int contador = 1;
 
             int n = 0;
@@ -79,6 +79,7 @@ int main() {
                 generarCombinacionesConComa(archivo, alfabeto, len_alfabeto, k, &contador);
             }
             clock_t final = clock();
+            fprintf(archivo, " }");
 
             fclose(archivo);
 
@@ -87,17 +88,26 @@ int main() {
             printf("\nTotal de cadenas generadas: %llu\n", contador);
             printf("Tiempo de ejecucion: %.6f segundos\n", ((double)(final - inicio)) / CLOCKS_PER_SEC);
 
-            printf("\n\nPresione cualquier tecla para continuar.........");
-            getchar();
-            getchar();
+            
 
             char command[200];
             printf("\n\nGraficando............");
-            sprintf(command, "python graficaC.py sigma_asterisco.txt");
+            sprintf(command, "python graficaC2.py sigma_asterisco.txt");
             system(command);
-            printf("\n\nPresione cualquier tecla para continuar.........");
-            getchar();
-            getchar();
+            printf("\n\nDeseas calcular de nuevo n (si o no)?: ");
+            char opcion[15];
+            scanf(" %s",&opcion);
+            if (stricmp("no",opcion)==0)
+            {
+                return 0;
+            }else if (stricmp("si",opcion)==0)
+            {
+                
+            }else{
+                printf("ERROR,PALABRA INVALIDA");
+                return 0;
+            }
+            
         } else if (opt == 3) {
             printf("\n\nSaliendo del programa.......... \n\n");
             condition = 0;
