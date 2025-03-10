@@ -2,7 +2,7 @@
 Version2Python.py 
 VersionAutomatas.c
 VersionRecursiva.py
-
+graficaC2.py
 # Ignorar ejecutables
 *.png
 *.class

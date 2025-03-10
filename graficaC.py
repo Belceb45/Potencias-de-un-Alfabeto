@@ -1,3 +1,33 @@
+"""
+    INSTITUTO POLITÉCNICO NACIONAL
+
+            ESCOM
+
+    Materia  --->   TEORÍA COMPUTACIONAL
+    Grupo    --->   4CM2
+    Profesor --->   Genaro Juárez Martínez
+    Alumno   --->   Rubio Haro Diego
+"""
+
+# Programa Universo (Primer programa)
+
+"""
+    //////////////////////////////////////////////////////////
+    Programar el universo de las cadenas binarias (Σ^n).
+    Dada una "n" que introduzca el usuario o que el programa
+    lo determine automáticamente. El rango de "n" debe de estar
+    en el intervalo de [0, 1000].
+
+
+    //////////////////////////////////////////////////////////
+
+    Este programa solo se enfocará en graficar la densidad de unos y 
+    ceros que se encuentran en el txt {sigma_asterisco}
+
+    //////////////////////////////////////////////////////////
+"""
+
+
 import sys
 import matplotlib.pyplot as plt
 
@@ -16,27 +46,35 @@ archivo = sys.argv[1]
 
 try:
     with open(archivo, "r") as f:
-        contenido = f.read().replace("E* = e, ", "").replace("e,", "").strip()
-        cadenas = [cadena.strip() for cadena in contenido.split(",") if cadena.strip() and cadena.strip() != "e"]
-        # print(cadenas)
+        contenido = f.read()
+        
+        # Limpiar encabezado y formato del archivo
+        if "{" in contenido:
+            contenido = contenido.split("{", 1)[1]
+        if "}" in contenido:
+            contenido = contenido.split("}")[0]
+        
+        cadenas = [cadena.strip() for cadena in contenido.split(",") if cadena.strip()]
 except FileNotFoundError:
     print(f"ERROR: Archivo {archivo} no encontrado.")
     sys.exit(1)
 
 # Calcular métricas por longitud
+
 longitud_maxima = max(len(cadena) for cadena in cadenas) if cadenas else 0
 
 acum_cadenas = []      
-acum_unos = []           
+acum_unos = []     
+acum_ceros = []      
 cadenas_por_longitud = []  
 unos_por_longitud = []     
 ceros_por_longitud = []    
 
 for long in range(1, longitud_maxima + 1):
     cadenas_long = [cadena for cadena in cadenas if len(cadena) == long]
-    total_cadenas = len(cadenas_long)  # Cambio clave: Contar cadenas, no símbolos
+    total_cadenas = len(cadenas_long)
     total_unos = sum(cadena.count("1") for cadena in cadenas_long)
-    total_ceros = sum(cadena.count("0") for cadena in cadenas_long)  # Contar ceros directamente
+    total_ceros = sum(cadena.count("0") for cadena in cadenas_long)
     
     cadenas_por_longitud.append(total_cadenas)
     unos_por_longitud.append(total_unos)
@@ -44,6 +82,7 @@ for long in range(1, longitud_maxima + 1):
     
     acum_cadenas.append(sum(cadenas_por_longitud))
     acum_unos.append(sum(unos_por_longitud))
+    acum_ceros.append(sum(ceros_por_longitud))
 
 # --- Imprimir estadísticas ---
 total_cadenas = sum(cadenas_por_longitud)
@@ -73,60 +112,39 @@ for ax in axs:
     ax.spines['left'].set_color(COLOR_TEXTO)
     ax.grid(True, alpha=0.2, color=COLOR_TEXTO)
 
-# --- Gráfica 1: Cadenas por longitud ---
-# print(cadenas_por_longitud)
-axs[0].plot(cadenas_por_longitud, 
-           color=COLOR_LINEAS, 
-           marker="o", 
-           markersize=8,
-           linewidth=2,
-           markerfacecolor=COLOR_TEXTO)
-axs[0].set_title("Densidad de '1s'", 
-                color=COLOR_TEXTO, 
-                fontsize=12,
-                fontweight='bold',
-                pad=15)
-axs[0].set_xlabel("Numero de cadenas", color=COLOR_TEXTO)
-axs[0].set_ylabel("Densidad '1s'", color=COLOR_TEXTO)
+# --- Gráfica 1: Densidad de '1's por cadena (Optimizada) ---
+print(longitud_maxima)
+axs[0].plot(range(1, longitud_maxima + 1), acum_unos[:longitud_maxima], color=COLOR_LINEAS, marker="o", markersize=5, linewidth=2)
+axs[1].semilogy(range(1, longitud_maxima + 1), acum_unos[:longitud_maxima], color=COLOR_LINEAS, marker="s", linewidth=2)
+axs[2].plot(range(1, longitud_maxima + 1), acum_ceros[:longitud_maxima], color=COLOR_LINEAS, marker="o", markersize=5, linewidth=2)
+axs[3].semilogy(range(1, longitud_maxima + 1), acum_ceros[:longitud_maxima], color=COLOR_LINEAS, marker="D", linewidth=2)
+
+axs[0].set_title("Crecimiento de '1's en función de n", color=COLOR_TEXTO, fontsize=12, fontweight='bold', pad=15)
+axs[0].set_xlabel("Longitud de las cadenas (n)", color=COLOR_TEXTO)
+axs[0].set_ylabel("Densidad de '1s'", color=COLOR_TEXTO)
 
 # --- Gráfica 2: Cadenas acumuladas (Log) ---
-axs[1].semilogy(acum_cadenas, 
-               color=COLOR_LINEAS, 
-               marker="s",
-               linewidth=2)
-axs[1].set_title("Grafica Log10 de Densidad '1s'", 
-                color=COLOR_TEXTO, 
-                fontsize=12,
-                fontweight='bold',
-                pad=15)
-axs[1].set_xlabel("Numero de cadenas", color=COLOR_TEXTO)
-axs[1].set_ylabel("Densidad '1s' ", color=COLOR_TEXTO)
+axs[1].set_title("Log10 densidad '1s'", color=COLOR_TEXTO, fontsize=12, fontweight='bold', pad=15)
+axs[1].set_xlabel("Longitud de las cadenas (n)", color=COLOR_TEXTO)
+axs[1].set_ylabel("Densidad de '1s'", color=COLOR_TEXTO)
 
-# --- Gráfica 3: '1's por longitud ---
-axs[2].plot(unos_por_longitud, 
-           color=COLOR_LINEAS, 
-           marker="^",
-           linewidth=2)
-axs[2].set_title("'1's por longitud", 
+# --- Gráfica 3: '0's por longitud ---
+axs[2].set_title("Crecimiento de '0's en funcion de n", 
                 color=COLOR_TEXTO, 
                 fontsize=12,
                 fontweight='bold',
                 pad=15)
-axs[2].set_xlabel("Longitud (n)", color=COLOR_TEXTO)
-axs[2].set_ylabel("Número de '1's", color=COLOR_TEXTO)
+axs[2].set_xlabel("Longitud de las cadenas (n)", color=COLOR_TEXTO)
+axs[2].set_ylabel("Densidad de '0s'", color=COLOR_TEXTO)
 
-# --- Gráfica 4: '1's acumulados (Log) ---
-axs[3].semilogy(acum_unos, 
-               color=COLOR_LINEAS, 
-               marker="D",
-               linewidth=2)
-axs[3].set_title("'1's acumulados (log)", 
+# --- Gráfica 4: '0's acumulados (Log) ---
+axs[3].set_title("Log10 densidad '0s' ", 
                 color=COLOR_TEXTO, 
                 fontsize=12,
                 fontweight='bold',
                 pad=15)
-axs[3].set_xlabel("Longitud (n)", color=COLOR_TEXTO)
-axs[3].set_ylabel("'1's acumulados", color=COLOR_TEXTO)
+axs[3].set_xlabel("Longitud de las cadenas (n)", color=COLOR_TEXTO)
+axs[3].set_ylabel("Densidad de '0s'", color=COLOR_TEXTO)
 
 # Título principal
 fig.suptitle("ANÁLISIS DE CADENAS BINARIAS - TEORÍA COMPUTACIONAL 4CM2         RUBIO HARO DIEGO", 
